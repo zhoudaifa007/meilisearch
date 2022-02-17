@@ -47,9 +47,19 @@ ENV     MEILI_SERVER_PROVIDER docker
 RUN     apk update --quiet \
         && apk add -q --no-cache libgcc tini
 
-COPY    --from=compiler /meilisearch/target/release/meilisearch .
+# add meilisearch to the `/bin` so you can run it from anywhere and it's easy
+# to find.
+COPY    --from=compiler /meilisearch/target/release/meilisearch /bin/meilisearch
+
+# We want user to mount this directory as a volume
+RUN     mkdir /data
+
+# This directory should hold all the data related to meilisearch so we're going
+# to move our PWD in there.
+# We don't want to put the meilisearch binary
+WORKDIR /data
 
 EXPOSE  7700/tcp
 
 ENTRYPOINT ["tini", "--"]
-CMD     ./meilisearch
+CMD     meilisearch
