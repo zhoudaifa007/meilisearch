@@ -52,7 +52,7 @@ impl<P: Policy + 'static, D: 'static + Clone> FromRequest for GuardedData<P, D> 
                         let index = req.match_info().get("index_uid");
                         match type_token.next() {
                             Some(token) => match P::authenticate(auth, token, index) {
-                                Some(filters) => match req.app_data::<D>().cloned() {
+                                Ok(filters) => match req.app_data::<D>().cloned() {
                                     Some(data) => ok(Self {
                                         data,
                                         filters,
@@ -60,10 +60,7 @@ impl<P: Policy + 'static, D: 'static + Clone> FromRequest for GuardedData<P, D> 
                                     }),
                                     None => err(AuthenticationError::IrretrievableState.into()),
                                 },
-                                None => {
-                                    let token = token.to_string();
-                                    err(AuthenticationError::InvalidToken(token).into())
-                                }
+                                Err(e) => err(e.into()),
                             },
                             None => {
                                 err(AuthenticationError::InvalidToken("unknown".to_string()).into())
@@ -73,7 +70,7 @@ impl<P: Policy + 'static, D: 'static + Clone> FromRequest for GuardedData<P, D> 
                     _otherwise => err(AuthenticationError::MissingAuthorizationHeader.into()),
                 },
                 None => match P::authenticate(auth, "", None) {
-                    Some(filters) => match req.app_data::<D>().cloned() {
+                    Ok(filters) => match req.app_data::<D>().cloned() {
                         Some(data) => ok(Self {
                             data,
                             filters,
@@ -81,7 +78,7 @@ impl<P: Policy + 'static, D: 'static + Clone> FromRequest for GuardedData<P, D> 
                         }),
                         None => err(AuthenticationError::IrretrievableState.into()),
                     },
-                    None => err(AuthenticationError::MissingAuthorizationHeader.into()),
+                    Err(e) => err(e.into()),
                 },
             },
             None => err(AuthenticationError::IrretrievableState.into()),
@@ -90,7 +87,11 @@ impl<P: Policy + 'static, D: 'static + Clone> FromRequest for GuardedData<P, D> 
 }
 
 pub trait Policy {
-    fn authenticate(auth: AuthController, token: &str, index: Option<&str>) -> Option<AuthFilter>;
+    fn authenticate(
+        auth: AuthController,
+        token: &str,
+        index: Option<&str>,
+    ) -> Result<AuthFilter, AuthenticationError>;
 }
 
 pub mod policies {
@@ -103,6 +104,8 @@ pub mod policies {
     use meilisearch_auth::{Action, AuthController, AuthFilter, SearchRules};
     // reexport actions in policies in order to be used in routes configuration.
     pub use meilisearch_auth::actions;
+
+    use super::error::AuthenticationError;
 
     pub static TENANT_TOKEN_VALIDATION: Lazy<Validation> = Lazy::new(|| Validation {
         validate_exp: false,
@@ -117,14 +120,14 @@ pub mod policies {
             auth: AuthController,
             token: &str,
             _index: Option<&str>,
-        ) -> Option<AuthFilter> {
+        ) -> Result<AuthFilter, AuthenticationError> {
             if let Some(master_key) = auth.get_master_key() {
                 if master_key == token {
-                    return Some(AuthFilter::default());
+                    return Ok(AuthFilter::default());
                 }
             }
 
-            None
+            Err(AuthenticationError::Todo)
         }
     }
 
@@ -135,24 +138,23 @@ pub mod policies {
             auth: AuthController,
             token: &str,
             index: Option<&str>,
-        ) -> Option<AuthFilter> {
+        ) -> Result<AuthFilter, AuthenticationError> {
             // authenticate if token is the master key.
             if auth.get_master_key().map_or(true, |mk| mk == token) {
-                return Some(AuthFilter::default());
+                return Ok(AuthFilter::default());
             }
 
             // Tenant token
-            if let Some(filters) = ActionPolicy::<A>::authenticate_tenant_token(&auth, token, index)
-            {
-                return Some(filters);
+            if let Ok(filters) = ActionPolicy::<A>::authenticate_tenant_token(&auth, token, index) {
+                return Ok(filters);
             } else if let Some(action) = Action::from_repr(A) {
                 // API key
                 if let Ok(true) = auth.authenticate(token.as_bytes(), action, index) {
-                    return auth.get_key_filters(token, None).ok();
+                    return Ok(auth.get_key_filters(token, None)?);
                 }
             }
 
-            None
+            Err(AuthenticationError::Todo)
         }
     }
 
@@ -161,10 +163,10 @@ pub mod policies {
             auth: &AuthController,
             token: &str,
             index: Option<&str>,
-        ) -> Option<AuthFilter> {
+        ) -> Result<AuthFilter, AuthenticationError> {
             // Only search action can be accessed by a tenant token.
             if A != actions::SEARCH {
-                return None;
+                return Err(AuthenticationError::IrretrievableState);
             }
 
             // get token fields without validating it.
@@ -172,42 +174,38 @@ pub mod policies {
                 search_rules,
                 exp,
                 api_key_prefix,
-            } = dangerous_insecure_decode::<Claims>(token).ok()?.claims;
+            } = dangerous_insecure_decode::<Claims>(token)?.claims;
 
             // Check index access if an index restriction is provided.
             if let Some(index) = index {
                 if !search_rules.is_index_authorized(index) {
-                    return None;
+                    return Err(AuthenticationError::Todo);
                 }
             }
 
             // Check if token is expired.
             if let Some(exp) = exp {
                 if Utc::now().timestamp() > exp {
-                    return None;
+                    return Err(AuthenticationError::Todo);
                 }
             }
 
             // check if parent key is authorized to do the action.
-            if auth
-                .is_key_authorized(api_key_prefix.as_bytes(), Action::Search, index)
-                .ok()?
-            {
+            if auth.is_key_authorized(api_key_prefix.as_bytes(), Action::Search, index)? {
                 // Check if tenant token is valid.
-                let key = auth.generate_key(&api_key_prefix)?;
+                let key = auth
+                    .generate_key(&api_key_prefix)
+                    .ok_or(AuthenticationError::Todo)?;
                 decode::<Claims>(
                     token,
                     &DecodingKey::from_secret(key.as_bytes()),
                     &TENANT_TOKEN_VALIDATION,
-                )
-                .ok()?;
+                )?;
 
-                return auth
-                    .get_key_filters(api_key_prefix, Some(search_rules))
-                    .ok();
+                return Ok(auth.get_key_filters(api_key_prefix, Some(search_rules))?);
             }
 
-            None
+            Err(AuthenticationError::Todo)
         }
     }
 
