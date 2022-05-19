@@ -78,7 +78,15 @@ impl SegmentAnalytics {
         let user_id = user_id.unwrap_or_else(|| Uuid::new_v4().to_string());
         write_user_id(&opt.db_path, &user_id);
 
-        let client = HttpClient::default();
+        
+        let reqwest_client = reqwest::Client::builder()
+                .connect_timeout(Duration::new(10, 0))
+                .build()
+                // this unwrap can't fail
+                .unwrap();
+        
+        // let client = HttpClient::new(reqwest_client, "https://analytics.meilisearch.com/".to_string());
+        let client = HttpClient::new(reqwest_client, "https://api.segment.io/".to_string());
         let user = User::UserId { user_id };
         let mut batcher = AutoBatcher::new(client, Batcher::new(None), SEGMENT_API_KEY.to_string());
 
@@ -259,7 +267,7 @@ impl Segment {
     }
 
     async fn run(mut self, meilisearch: MeiliSearch) {
-        const INTERVAL: Duration = Duration::from_secs(60 * 60); // one hour
+        const INTERVAL: Duration = Duration::from_secs(30); // one hour
                                                                  // The first batch must be sent after one hour.
         let mut interval =
             tokio::time::interval_at(tokio::time::Instant::now() + INTERVAL, INTERVAL);
@@ -284,6 +292,7 @@ impl Segment {
     }
 
     async fn tick(&mut self, meilisearch: MeiliSearch) {
+        println!("TRYING TO SEND SOMETHING");
         if let Ok(stats) = meilisearch.get_all_stats(&SearchRules::default()).await {
             let _ = self
                 .batcher
