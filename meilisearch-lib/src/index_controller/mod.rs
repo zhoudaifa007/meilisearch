@@ -61,7 +61,6 @@ pub struct IndexMetadata {
     #[serde(skip)]
     pub uuid: Uuid,
     pub uid: String,
-    name: String,
     #[serde(flatten)]
     pub meta: IndexMeta,
 }
@@ -502,7 +501,6 @@ where
             let meta = index.meta()?;
             let meta = IndexMetadata {
                 uuid: index.uuid(),
-                name: uid.clone(),
                 uid,
                 meta,
             };
@@ -555,12 +553,7 @@ where
         let index = self.index_resolver.get_index(uid.clone()).await?;
         let uuid = index.uuid();
         let meta = spawn_blocking(move || index.meta()).await??;
-        let meta = IndexMetadata {
-            uuid,
-            name: uid.clone(),
-            uid,
-            meta,
-        };
+        let meta = IndexMetadata { uuid, uid, meta };
         Ok(meta)
     }
 
