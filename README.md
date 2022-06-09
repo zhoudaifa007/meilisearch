@@ -30,16 +30,16 @@ Meilisearch's mission is to help you shape a delightful search experience in a s
 
 ## ✨ Features
 
-- **Search-as-you-type experience —** Provides relevant search results in less than 50 milliseconds.
+- **Search-as-you-type experience** — Provides relevant search results in less than 50 milliseconds.
 - **Typo tolerant** — Understands misspellings and adapts to return relevant results.
 - **Facetting and filtering** — Enhance your user's search experience with custom filters and build a faceted search interface in a few lines of code.
 - **Sort by** — Sort results based on price, date, or pretty much anything else your users need.
-- **Synonyms** — ****Meilisearch supports synonyms, so each of your users will find the content they are looking for.
+- **Synonyms** — Meilisearch supports synonyms, so each of your users will find the content they are looking for.
 - **Geosearch** — Filter, sort documents around real-world geographic data.
-- ****Language support**** — ********Meilisearch supports all languages and detects them automatically.
-- **Secure** — ****Secure your data with API keys that allow fine-grained permissions management.
-- **Multi-Tenant** — ****Personalize ****the search results for each of your application's tenants.
-- **Highly Customizable** — ****Meilisearch provides presets that work out of the box but are customizable for your specific needs.
+- **Language support** — Meilisearch supports all languages and detects them automatically.
+- **Secure** — **Secure your data with API keys that allow fine-grained permissions management.
+- **Multi-Tenant** — Personalize the search results for each of your application's tenants.
+- **Highly Customizable** — Meilisearch provides presets that work out of the box but are customizable for your specific needs.
 - **RESTful API** — Integrate seamlessly into your technical stack with our SDKs/Integrations.
 - **Easy to install, deploy, and maintain**
 
