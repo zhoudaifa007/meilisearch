@@ -2046,6 +2046,7 @@ name = "meilisearch-error"
 version = "0.28.0"
 dependencies = [
  "actix-web",
+ "jayson",
  "proptest",
  "proptest-derive",
  "serde",
@@ -2151,6 +2152,7 @@ dependencies = [
  "http",
  "indexmap",
  "itertools",
+ "jayson",
  "lazy_static",
  "log",
  "meilisearch-auth",

@@ -4,6 +4,7 @@ use std::str::FromStr;
 use std::time::Instant;
 
 use either::Either;
+use jayson::{DeserializeFromValue, Error as JaysonError};
 use milli::tokenizer::TokenizerBuilder;
 use milli::{
     AscDesc, FieldId, FieldsIdsMap, Filter, FormatOptions, MatchBounds, MatcherBuilder, SortError,
@@ -30,29 +31,29 @@ pub const DEFAULT_HIGHLIGHT_POST_TAG: fn() -> String = || "</em>".to_string();
 /// will be able to return in one search call.
 pub const HARD_RESULT_LIMIT: usize = 1000;
 
-#[derive(Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromValue)]
+#[jayson(error = jayson::Error, rename_all = camelCase, deny_unknown_fields)]
 pub struct SearchQuery {
     pub q: Option<String>,
     pub offset: Option<usize>,
-    #[serde(default = "DEFAULT_SEARCH_LIMIT")]
+    #[jayson(default = DEFAULT_SEARCH_LIMIT())]
     pub limit: usize,
     pub attributes_to_retrieve: Option<BTreeSet<String>>,
     pub attributes_to_crop: Option<Vec<String>>,
-    #[serde(default = "DEFAULT_CROP_LENGTH")]
+    #[jayson(default = DEFAULT_CROP_LENGTH())]
     pub crop_length: usize,
     pub attributes_to_highlight: Option<HashSet<String>>,
     // Default to false
-    #[serde(default = "Default::default")]
+    #[jayson(default)]
     pub show_matches_position: bool,
     pub filter: Option<Value>,
     pub sort: Option<Vec<String>>,
     pub facets: Option<Vec<String>>,
-    #[serde(default = "DEFAULT_HIGHLIGHT_PRE_TAG")]
+    #[jayson(default = DEFAULT_HIGHLIGHT_PRE_TAG())]
     pub highlight_pre_tag: String,
-    #[serde(default = "DEFAULT_HIGHLIGHT_POST_TAG")]
+    #[jayson(default = DEFAULT_HIGHLIGHT_POST_TAG())]
     pub highlight_post_tag: String,
-    #[serde(default = "DEFAULT_CROP_MARKER")]
+    #[jayson(default = DEFAULT_CROP_MARKER())]
     pub crop_marker: String,
 }
 

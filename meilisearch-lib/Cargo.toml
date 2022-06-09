@@ -26,6 +26,7 @@ futures-util = "0.3.21"
 http = "0.2.6"
 indexmap = { version = "1.8.0", features = ["serde-1"] }
 itertools = "0.10.3"
+jayson = { path = "../../jayson" }
 lazy_static = "1.4.0"
 log = "0.4.14"
 meilisearch-auth = { path = "../meilisearch-auth" }

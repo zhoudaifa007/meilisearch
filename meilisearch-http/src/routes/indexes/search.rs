@@ -13,6 +13,7 @@ use serde_json::Value;
 
 use crate::analytics::{Analytics, SearchAggregator};
 use crate::extractors::authentication::{policies::*, GuardedData};
+use crate::extractors::jayson::ValidatedJson;
 use crate::extractors::sequential_extractor::SeqHandler;
 use crate::routes::{fold_star_or, StarOr};
 
@@ -160,7 +161,7 @@ pub async fn search_with_url_query(
 pub async fn search_with_post(
     meilisearch: GuardedData<ActionPolicy<{ actions::SEARCH }>, MeiliSearch>,
     path: web::Path<String>,
-    params: web::Json<SearchQuery>,
+    params: ValidatedJson<SearchQuery, jayson::Error>,
     req: HttpRequest,
     analytics: web::Data<dyn Analytics>,
 ) -> Result<HttpResponse, ResponseError> {

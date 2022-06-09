@@ -1,4 +1,4 @@
-use std::fmt;
+use std::fmt::{self, Display};
 
 use actix_web::{self as aweb, http::StatusCode, HttpResponseBuilder};
 use serde::{Deserialize, Serialize};
@@ -361,5 +361,11 @@ macro_rules! internal_error {
                 }
             }
         )*
+    }
+}
+
+impl ErrorCode for jayson::Error {
+    fn error_code(&self) -> Code {
+        Code::MalformedPayload
     }
 }
