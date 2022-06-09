@@ -28,6 +28,8 @@ Meilisearch's mission is to help you shape a delightful search experience in a s
   <img src="assets/demo-dark.gif#gh-dark-mode-only" alt="demo-light">
 </p>
 
+<!-- Go to [this demo]() to try Meilisearch! -->
+
 ## ✨ Features
 
 - **Search-as-you-type experience** — Provides relevant search results in less than 50 milliseconds.
