@@ -23,8 +23,10 @@
 
 Meilisearch's mission is to help you shape a delightful search experience in a snap. To fulfill it, Meilisearch offers out-of-the-box features to speed up your workflow.
 
-![demo-light](./assets/demo-light.gif#gh-light-mode-only)
-![demo-dark](./assets/demo-dark.gif#gh-dark-mode-only)
+<p align="center" name="demo">
+  <img src="assets/demo-light.gif#gh-light-mode-only" alt="demo-light">
+  <img src="assets/demo-dark.gif#gh-dark-mode-only" alt="demo-light">
+</p>
 
 ## ✨ Features
 
