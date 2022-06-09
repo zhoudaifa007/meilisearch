@@ -53,6 +53,14 @@ For basic instructions on how to set up Meilisearch, add documents to an index, 
 
 You may also want to check out [Meilisearch 101](https://docs.meilisearch.com/learn/getting_started/filtering_and_sorting.html), for an introduction to some of Meilisearch's most popular features.
 
+## 🧰 SDKs & integration tools
+
+Import one of our SDKs and libraries to easy integrate Meilisearch in your project using your favorite language or framework!
+
+Take a look at the complete [Meilisearch integration list](https://docs.meilisearch.com/learn/what_is_meilisearch/sdks.html).
+
+<!-- Banner incoming... -->
+
 ## ⚙️ Advanced usage
 
 Experienced users will want to keep our [API Reference](https://docs.meilisearch.com/reference/api) close at hand.
