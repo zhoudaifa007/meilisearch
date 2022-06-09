@@ -86,7 +86,7 @@ Meilisearch is developed by [Meili](https://www.welcometothejungle.com/en/compan
 
 💌 Any suggestion or feedback is highly appreciated. Thank you for your support!
 
-- For feature requests, please visit our [product repository](https://github.com/meilisearch/product/) / check the product section?
+- For feature requests, please visit our [product repository](https://github.com/meilisearch/product/discussions)
 - Found a bug? Open an [issue](https://github.com/meilisearch/meilisearch/issues)!
 - Want to be part of our Slack community? [Join us](https://slack.meilisearch.com/)!
 - For anything else, please check [this page](https://docs.meilisearch.com/learn/what_is_meilisearch/contact.html)
