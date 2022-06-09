@@ -3,7 +3,7 @@ use futures::ready;
 use jayson::{DeserializeError, DeserializeFromValue, IntoValue};
 use meilisearch_error::{Code, ErrorCode, ResponseError};
 use std::{
-    fmt::{Debug, Display},
+    fmt::Debug,
     future::Future,
     marker::PhantomData,
     pin::Pin,

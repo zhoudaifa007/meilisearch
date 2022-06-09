@@ -1,10 +1,13 @@
 use std::cmp::min;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::fmt::Display;
 use std::str::FromStr;
 use std::time::Instant;
 
+use csv::DeserializeError;
 use either::Either;
 use jayson::{DeserializeFromValue, Error as JaysonError};
+use meilisearch_error::ErrorCode;
 use milli::tokenizer::TokenizerBuilder;
 use milli::{
     AscDesc, FieldId, FieldsIdsMap, Filter, FormatOptions, MatchBounds, MatcherBuilder, SortError,
@@ -31,8 +34,74 @@ pub const DEFAULT_HIGHLIGHT_POST_TAG: fn() -> String = || "</em>".to_string();
 /// will be able to return in one search call.
 pub const HARD_RESULT_LIMIT: usize = 1000;
 
+#[derive(Debug)]
+pub enum SearchQueryError {
+    QueryInsteadOfQ,
+    UnknownField(String),
+    Other(jayson::Error),
+}
+
+// This is not ideal.
+// I think it would be better to use something like `From<jayson::Error>` instead.
+// It would make it easier to implement and more flexible.
+// Or we can even have a standard type such as
+// ```
+// enum CustomError<E> {
+//      Custom(E),
+//      Other(jayson::Error)
+// }
+// ```
+// and it implements jayson::DeserializeError no matter what.
+// In fact, we can get rid of the whole trait and just use an enum.
+// The problem is that then, we can't have custom errors for missing fields
+impl jayson::DeserializeError for SearchQueryError {
+    fn incorrect_value_kind(accepted: &[jayson::ValueKind]) -> Self {
+        Self::Other(jayson::Error::incorrect_value_kind(accepted))
+    }
+
+    fn missing_field(field: &str) -> Self {
+        Self::Other(jayson::Error::missing_field(field))
+    }
+
+    fn unexpected(msg: &str) -> Self {
+        Self::Other(jayson::Error::unexpected(msg))
+    }
+}
+// This is important, it is where the error message is defined
+impl Display for SearchQueryError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SearchQueryError::QueryInsteadOfQ => write!(
+                f,
+                "The correct Json key for the search query is `q`, not `query`, how confusing!"
+            ),
+            SearchQueryError::UnknownField(x) => write!(f, "Unknown field: {x}"),
+            SearchQueryError::Other(e) => Display::fmt(e, f),
+        }
+    }
+}
+impl std::error::Error for SearchQueryError {}
+
+// === QUESTION: ===
+// Won't all errors have the same payload? If yes, then I can
+// simplify things a bit and it won't be necessary to add this kind of code anymore
+impl meilisearch_error::ErrorCode for SearchQueryError {
+    fn error_code(&self) -> meilisearch_error::Code {
+        meilisearch_error::Code::MalformedPayload
+    }
+}
+
+fn deny_unknown_search_query_field(s: &str) -> SearchQueryError {
+    // === IDEA ===
+    // Get creative, take the levenshtein distance to the other fields and propose a fix!
+    match s {
+        "query" => SearchQueryError::QueryInsteadOfQ,
+        _ => SearchQueryError::UnknownField(s.to_string()),
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, DeserializeFromValue)]
-#[jayson(error = jayson::Error, rename_all = camelCase, deny_unknown_fields)]
+#[jayson(error = SearchQueryError, rename_all = camelCase, deny_unknown_fields = deny_unknown_search_query_field)]
 pub struct SearchQuery {
     pub q: Option<String>,
     pub offset: Option<usize>,

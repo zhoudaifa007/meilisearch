@@ -3,8 +3,8 @@ use log::debug;
 use meilisearch_auth::IndexSearchRules;
 use meilisearch_error::ResponseError;
 use meilisearch_lib::index::{
-    SearchQuery, DEFAULT_CROP_LENGTH, DEFAULT_CROP_MARKER, DEFAULT_HIGHLIGHT_POST_TAG,
-    DEFAULT_HIGHLIGHT_PRE_TAG, DEFAULT_SEARCH_LIMIT,
+    SearchQuery, SearchQueryError, DEFAULT_CROP_LENGTH, DEFAULT_CROP_MARKER,
+    DEFAULT_HIGHLIGHT_POST_TAG, DEFAULT_HIGHLIGHT_PRE_TAG, DEFAULT_SEARCH_LIMIT,
 };
 use meilisearch_lib::MeiliSearch;
 use serde::Deserialize;
@@ -161,7 +161,7 @@ pub async fn search_with_url_query(
 pub async fn search_with_post(
     meilisearch: GuardedData<ActionPolicy<{ actions::SEARCH }>, MeiliSearch>,
     path: web::Path<String>,
-    params: ValidatedJson<SearchQuery, jayson::Error>,
+    params: ValidatedJson<SearchQuery, SearchQueryError>,
     req: HttpRequest,
     analytics: web::Data<dyn Analytics>,
 ) -> Result<HttpResponse, ResponseError> {
