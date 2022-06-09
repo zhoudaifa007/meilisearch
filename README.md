@@ -37,7 +37,7 @@ Meilisearch's mission is to help you shape a delightful search experience in a s
 - **Synonyms** — Meilisearch supports synonyms, so each of your users will find the content they are looking for.
 - **Geosearch** — Filter, sort documents around real-world geographic data.
 - **Language support** — Meilisearch supports all languages and detects them automatically.
-- **Secure** — **Secure your data with API keys that allow fine-grained permissions management.
+- **Secure** — Secure your data with API keys that allow fine-grained permissions management.
 - **Multi-Tenant** — Personalize the search results for each of your application's tenants.
 - **Highly Customizable** — Meilisearch provides presets that work out of the box but are customizable for your specific needs.
 - **RESTful API** — Integrate seamlessly into your technical stack with our SDKs/Integrations.
