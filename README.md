@@ -82,6 +82,7 @@ If you want to know more about the kind of data we collect and why we need it, c
 ## 📫 Get in touch!
 
 Meilisearch is developed by [Meili](https://www.welcometothejungle.com/en/companies/meilisearch), a young company. To know more about us, you can read our [blog](https://blog.meilisearch.com/).
+
 🗞 [Subscribe](https://meilisearch.us2.list-manage.com/subscribe?u=27870f7b71c908a8b359599fb&id=79582d828e) to our newsletter if you don't want to miss any updates! We promise we won't clutter your mailbox, it's sent every two months
 
 💌 Any suggestion or feedback is highly appreciated. Thank you for your support!
