@@ -71,7 +71,7 @@ We also offer a wide range of dedicated guides to all Meilisearch features, such
 
 Finally, for more in-depth information, refer to our articles explaining fundamental Meilisearch concepts such as [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html) and [indexes](https://docs.meilisearch.com/learn/core_concepts/indexes.html).
 
-## 📊 Telemtry
+## 📊 Telemetry
 
 Meilisearch collects **anonymized** data from users to help us improve our product. You can [deactivate this](https://docs.meilisearch.com/learn/what_is_meilisearch/telemetry.html#how-to-disable-data-collection) whenever you want.
 
