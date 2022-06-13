@@ -36,7 +36,7 @@ Meilisearch's mission is to help you shape a delightful search experience in a s
 - **Typo tolerant** — Understands misspellings and adapts to return relevant results.
 - **Facetting and filtering** — Enhance your user's search experience with custom filters and build a faceted search interface in a few lines of code.
 - **Sort by** — Sort results based on price, date, or pretty much anything else your users need.
-- **Synonyms** — Meilisearch supports synonyms, so each of your users will find the content they are looking for.
+- **Synonyms** — Meilisearch supports synonyms customization, extending the relevant content your users find.
 - **Geosearch** — Filter, sort documents around real-world geographic data.
 - **Language support** — Meilisearch supports all languages and detects them automatically.
 - **Secure** — Secure your data with API keys that allow fine-grained permissions management.
