@@ -25,7 +25,7 @@ Meilisearch's mission is to help you shape a delightful search experience in a s
 
 <p align="center" name="demo">
   <img src="assets/demo-light.gif#gh-light-mode-only" alt="demo-light">
-  <img src="assets/demo-dark.gif#gh-dark-mode-only" alt="demo-light">
+  <img src="assets/demo-dark.gif#gh-dark-mode-only" alt="demo-dark">
 </p>
 
 <!-- Go to [this demo]() to try Meilisearch! -->
