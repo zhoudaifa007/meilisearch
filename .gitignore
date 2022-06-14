@@ -7,3 +7,5 @@
 /data.ms
 /snapshots
 /dumps
+.idea
+*.iml
