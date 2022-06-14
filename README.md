@@ -61,7 +61,7 @@ Import one of our SDKs and libraries to easy integrate Meilisearch in your proje
 
 Take a look at the complete [Meilisearch integration list](https://docs.meilisearch.com/learn/what_is_meilisearch/sdks.html).
 
-<!-- Banner incoming... -->
+![integrations](assets/integrations.png)
 
 ## ⚙️ Advanced usage
 
